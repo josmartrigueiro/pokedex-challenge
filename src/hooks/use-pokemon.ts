@@ -1,8 +1,8 @@
 import { pokemonService } from "@/services/pokemon";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-const STALE_TIME = 1000 * 60 * 5; // 5 min
-const GC_TIME = 1000 * 60 * 10; // 10 min
+const STALE_TIME = 1000 * 60 * 15; // 15 min - cache mais agressivo
+const GC_TIME = 1000 * 60 * 30; // 30 min - manter em memória por mais tempo
 
 export function usePokemonList(limit = 20) {
 	return useQuery({
