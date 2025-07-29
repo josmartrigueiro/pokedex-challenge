@@ -16,10 +16,10 @@ Interactive Pokédx app with modern design, smooth animations, and responsive in
 ## 🖼️ Preview
 
 <p align="center">
-  <img src="./public/pokemonLogo.png" alt="Pokédex Logo" height="120" />
+  <img src="https://llqwehnbkycggfewbtow.supabase.co/storage/v1/object/public/arena//pokemonLogo.png" alt="Pokédex Logo" height="120" />
 </p>
 
-<img src="./public/pokemon-app.png" alt="Pokédx App Preview" />
+<img src="https://llqwehnbkycggfewbtow.supabase.co/storage/v1/object/public/arena//pokemon-app.png" alt="Pokédx App Preview" />
 
 ---
 
