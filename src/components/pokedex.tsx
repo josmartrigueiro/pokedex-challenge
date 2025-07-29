@@ -1,18 +1,18 @@
+import { usePagination } from "@/hooks/use-pagination";
+import { usePokemonList } from "@/hooks/use-pokemon";
 import { usePokemonFilters } from "@/hooks/use-pokemon-filters";
-import { useVirtualList } from "@/hooks/use-virtual-list";
 import { cn } from "@/lib/utils";
 import {
 	loadingVariant,
 	pokedexContainerVariant,
 } from "@/utils/variants-animation";
 import { motion } from "motion/react";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { PokedexEmptyState } from "./pokedex-empty-state";
 import { PokedexGrid } from "./pokedex-grid";
 import { PokedexHeader } from "./pokedex-header";
 import { PokemonFilters } from "./pokemon-filters";
-
-import { PokemonSkeletonGrid } from "./ui/pokemon-skeleton";
+import { PokemonPagination } from "./pokemon-pagination";
 import { Spinner } from "./ui/spinner";
 
 interface PokedexProps {
@@ -20,6 +20,11 @@ interface PokedexProps {
 }
 
 export function Pokedex({ className }: PokedexProps) {
+	const prevPageRef = useRef<number>(1);
+	const itemsPerPage = 16;
+
+	const { data: pokemon, isLoading, error } = usePokemonList(200);
+
 	const {
 		search,
 		sortBy,
@@ -27,24 +32,29 @@ export function Pokedex({ className }: PokedexProps) {
 		setSearch,
 		setSort,
 		clearFilters,
-		debouncedSearch,
+		filterAndSortPokemon,
 	} = usePokemonFilters();
 
-	// Use virtual list for optimized loading
-	const {
-		displayedPokemon: filteredAndSortedPokemon,
-		isLoading,
-		hasMore,
-		loadMore,
-		totalLoaded,
-		error,
-	} = useVirtualList({
-		searchTerm: debouncedSearch,
-		sortBy,
-		sortOrder,
-	});
+	const filteredAndSortedPokemon = useMemo(() => {
+		return pokemon ? filterAndSortPokemon(pokemon) : [];
+	}, [pokemon, filterAndSortPokemon]);
 
-	const currentPagePokemon = filteredAndSortedPokemon;
+	const { currentPage, totalPages, startIndex, endIndex, goToPage } =
+		usePagination({
+			itemsPerPage,
+			totalItems: filteredAndSortedPokemon.length,
+		});
+
+	const currentPagePokemon = useMemo(() => {
+		return filteredAndSortedPokemon.slice(startIndex, endIndex);
+	}, [filteredAndSortedPokemon, startIndex, endIndex]);
+
+	useEffect(() => {
+		if (currentPage !== prevPageRef.current) {
+			window.scrollTo({ top: 0 });
+			prevPageRef.current = currentPage;
+		}
+	}, [currentPage]);
 
 	const handleRetryClick = useCallback(() => {
 		window.location.reload();
@@ -92,15 +102,12 @@ export function Pokedex({ className }: PokedexProps) {
 					variants={loadingVariant}
 					initial="initial"
 					animate="animate"
-					className="space-y-6"
+					className="flex gap-2 items-center justify-center min-h-[400px]"
 				>
-					<div className="flex gap-2 items-center justify-center">
-						<Spinner className="text-blue-600 dark:text-blue-400" />
-						<p className="text-gray-800 dark:text-gray-200 font-medium">
-							Loading Pokédex...
-						</p>
-					</div>
-					<PokemonSkeletonGrid count={20} />
+					<Spinner className=" text-blue-600 dark:text-blue-400" />
+					<p className="text-gray-800 dark:text-gray-200 font-medium">
+						Loading Pokédex...
+					</p>
 				</motion.div>
 			)}
 
@@ -108,23 +115,23 @@ export function Pokedex({ className }: PokedexProps) {
 				<PokedexGrid pokemon={currentPagePokemon} />
 			)}
 
-			{hasMore && !isLoading && filteredAndSortedPokemon.length > 0 && (
-				<div className="flex justify-center mt-8">
-					<button
-						type="button"
-						onClick={loadMore}
-						className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
-					>
-						Load More Pokémon ({totalLoaded} loaded)
-					</button>
-				</div>
+			{filteredAndSortedPokemon.length > itemsPerPage && (
+				<PokemonPagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					onPageChange={goToPage}
+					totalItems={filteredAndSortedPokemon.length}
+					itemsPerPage={itemsPerPage}
+				/>
 			)}
 
-			{totalLoaded > 0 && filteredAndSortedPokemon.length === 0 && (
-				<PokedexEmptyState type="no-results" onRetry={clearFilters} />
-			)}
+			{pokemon &&
+				pokemon.length > 0 &&
+				filteredAndSortedPokemon.length === 0 && (
+					<PokedexEmptyState type="no-results" onRetry={clearFilters} />
+				)}
 
-			{!isLoading && totalLoaded === 0 && (
+			{pokemon && pokemon.length === 0 && (
 				<PokedexEmptyState type="no-pokemon" />
 			)}
 		</motion.div>
