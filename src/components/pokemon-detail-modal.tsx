@@ -9,7 +9,13 @@ import { ImageOff } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Badge } from "./ui/badge";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogTitle,
+	DialogTrigger,
+} from "./ui/dialog";
 import { Spinner } from "./ui/spinner";
 
 interface PokemonDetailModalProps {
@@ -119,9 +125,11 @@ export function PokemonDetailModal({
 									<DialogTitle className="text-2xl md:text-3xl font-bold capitalize leading-tight text-gray-900">
 										{pokemon.name}
 									</DialogTitle>
-									<p className="text-sm font-medium text-gray-600">
-										#{String(pokemon.id).padStart(3, "0")}
-									</p>
+									<DialogDescription className="text-sm font-medium text-gray-600">
+										#{String(pokemon.id).padStart(3, "0")} -{" "}
+										{pokemon.types.join("/")} type Pokémon with{" "}
+										{pokemon.powerLevel} power level
+									</DialogDescription>
 								</div>
 
 								<div className="flex gap-2 flex-wrap">

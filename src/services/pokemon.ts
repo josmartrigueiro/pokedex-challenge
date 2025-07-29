@@ -5,7 +5,8 @@ import type {
 	PokemonListResponse,
 } from "@/types/api";
 
-const POKEMON_API_BASE_URL = "https://pokeapi.co/api/v2";
+const POKEMON_API_BASE_URL =
+	import.meta.env.VITE_POKEMON_API_BASE_URL || "https://pokeapi.co/api/v2";
 
 export const pokemonApi = {
 	async fetchPokemonList(limit = 20, offset = 0): Promise<PokeApiResponse> {

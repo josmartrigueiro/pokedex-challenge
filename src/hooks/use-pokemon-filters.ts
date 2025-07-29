@@ -1,6 +1,7 @@
 import type { Pokemon } from "@/types/pokemon";
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { useDebounce } from "./use-debounce";
 
 interface PokemonFilters {
 	search: string;
@@ -18,6 +19,7 @@ interface UsePokemonFiltersResult {
 	setSort: (sortBy: string, sortOrder: "asc" | "desc") => void;
 	clearFilters: () => void;
 	filterAndSortPokemon: (pokemon: Pokemon[]) => Pokemon[];
+	debouncedSearch: string;
 }
 
 export function usePokemonFilters(): UsePokemonFiltersResult {
@@ -26,6 +28,8 @@ export function usePokemonFilters(): UsePokemonFiltersResult {
 	const search = searchParams?.search || "";
 	const sortBy = searchParams?.sortBy || "id";
 	const sortOrder = (searchParams?.sortOrder as "asc" | "desc") || "asc";
+
+	const debouncedSearch = useDebounce(search, 300);
 
 	const updateSearch = (newParams: Partial<PokemonFilters>) => {
 		const url = new URL(window.location.href);
@@ -75,8 +79,8 @@ export function usePokemonFilters(): UsePokemonFiltersResult {
 		return (pokemon: Pokemon[]): Pokemon[] => {
 			let filtered = [...pokemon];
 
-			if (search) {
-				const searchLower = search.toLowerCase();
+			if (debouncedSearch) {
+				const searchLower = debouncedSearch.toLowerCase();
 				filtered = filtered.filter(
 					(p) =>
 						p.name.toLowerCase().includes(searchLower) ||
@@ -114,7 +118,7 @@ export function usePokemonFilters(): UsePokemonFiltersResult {
 
 			return filtered;
 		};
-	}, [search, sortBy, sortOrder]);
+	}, [debouncedSearch, sortBy, sortOrder]);
 
 	return {
 		search,
@@ -126,5 +130,6 @@ export function usePokemonFilters(): UsePokemonFiltersResult {
 		setSort,
 		clearFilters,
 		filterAndSortPokemon,
+		debouncedSearch,
 	};
 }

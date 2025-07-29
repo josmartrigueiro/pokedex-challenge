@@ -1,6 +1,6 @@
 {
-  "short_name": "Pokédex",
-  "name": "Pokédex - Discover Amazing Pokémon",
+  "short_name": "Pokédx",
+  "name": "Pokédx - Discover Amazing Pokémon",
   "icons": [
     {
       "src": "favicon.ico",
@@ -16,11 +16,6 @@
       "src": "android-chrome-512x512.png",
       "type": "image/png", 
       "sizes": "512x512"
-    },
-    {
-      "src": "apple-touch-icon.png",
-      "type": "image/png",
-      "sizes": "180x180"
     }
   ],
   "start_url": ".",

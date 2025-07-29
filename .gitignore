@@ -7,3 +7,7 @@ count.txt
 .env
 .nitro
 .tanstack
+
+# Environment variables
+.env
+.env.local

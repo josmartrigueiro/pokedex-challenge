@@ -40,16 +40,65 @@ git clone https://github.com/your-username/pokedex-challenge.git
 cd pokedex-challenge
 npm install
 
+# Configure environment (required)
+cp .env.example .env
+
 # Start development
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) (or the available port shown in terminal)
 
 ### Available Scripts
 - `npm run dev` – Development server
 - `npm run build` – Production build
 - `npm run preview` – Preview build
+
+---
+
+## ⚙️ Environment Setup
+
+### 1. Create `.env` file
+
+Copy the example file and configure your environment:
+
+```bash
+cp .env.example .env
+```
+
+### 2. Configure API Settings
+
+Edit `.env` with your preferred settings:
+
+```bash
+# PokeAPI Configuration
+VITE_POKEMON_API_BASE_URL=https://pokeapi.co/api/v2
+
+# Optional future configurations
+# VITE_APP_VERSION=1.0.0
+# VITE_ENABLE_ANALYTICS=false
+```
+
+### 3. Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `VITE_POKEMON_API_BASE_URL` | PokéAPI base URL | `https://pokeapi.co/api/v2` | ❌ |
+
+> ⚠️ **Important**: All client-side variables must start with `VITE_` prefix
+
+### 4. Different Environments
+
+```bash
+# Development
+.env.local          # Local overrides (gitignored)
+
+# Production  
+.env.production     # Production settings
+
+# Testing
+.env.test          # Test environment settings
+```
 
 ---
 
